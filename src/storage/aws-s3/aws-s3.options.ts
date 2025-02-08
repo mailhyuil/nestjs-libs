@@ -3,5 +3,4 @@ export type AwsS3StorageOptions = {
   region: string;
   accessKeyId: string;
   secretAccessKey: string;
-  domain: string;
 };

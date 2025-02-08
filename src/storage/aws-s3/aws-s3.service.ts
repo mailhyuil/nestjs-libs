@@ -1,6 +1,5 @@
 import {
   DeleteObjectCommand,
-  DeleteObjectsCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
@@ -102,25 +101,6 @@ export class AwsS3Service implements IStorageService {
     await this.s3.send(command).catch((error) => {
       throw new AwsS3DeleteFailedException(error);
     });
-  }
-
-  async deleteAll(urls: string[]) {
-    const command = new DeleteObjectsCommand({
-      Bucket: this.options.bucket,
-      Delete: {
-        Objects: urls.map((url) => ({
-          Key: url.replace(this.options.domain + '/', ''),
-        })),
-        Quiet: false,
-      },
-    });
-    const res = await this.s3.send(command).catch((error) => {
-      throw new AwsS3DeleteFailedException(error);
-    });
-
-    this.logger.log(`
-    ${res.Deleted?.length}개 파일이 삭제되었습니다.
-`);
   }
 
   async getPresignedUrl({ key }: { key: string }) {
