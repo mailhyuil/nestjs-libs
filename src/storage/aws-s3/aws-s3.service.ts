@@ -14,22 +14,23 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import path from 'path';
-import { IStorageService } from '../interfaces/storage.interface';
+import { IStorageService } from '../storage.interface';
+
+import { STORAGE_OPTIONS } from '../storage.token';
 import {
   AwsS3DeleteFailedException,
   AwsS3GetPresignedUrlFailedException,
   AwsS3ListFailedException,
   AwsS3UploadFailedException,
 } from './aws-s3.exception';
-import { AWS_S3_MODULE_OPTIONS, AwsS3ModuleOptionsType } from './aws-s3.token';
+import { AwsS3StorageOptions } from './aws-s3.options';
 
 @Injectable()
 export class AwsS3Service implements IStorageService {
   private readonly logger = new Logger(AwsS3Service.name);
   s3: S3Client;
   constructor(
-    @Inject(AWS_S3_MODULE_OPTIONS)
-    private readonly options: AwsS3ModuleOptionsType,
+    @Inject(STORAGE_OPTIONS) private readonly options: AwsS3StorageOptions,
   ) {
     Object.keys(this.options).forEach((key) => {
       const unsetValues: string[] = [];
@@ -108,7 +109,7 @@ export class AwsS3Service implements IStorageService {
       Bucket: this.options.bucket,
       Delete: {
         Objects: urls.map((url) => ({
-          Key: url.replace(this.options.cloudfrontDomain + '/', ''),
+          Key: url.replace(this.options.domain + '/', ''),
         })),
         Quiet: false,
       },

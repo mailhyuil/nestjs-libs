@@ -7,7 +7,8 @@ import {
 import { Request } from 'express';
 import fs, { createWriteStream } from 'fs';
 import path from 'path';
-import { IStorageService } from '../interfaces/storage.interface';
+import { IStorageService } from '../storage.interface';
+import { STORAGE_OPTIONS } from '../storage.token';
 import { encodeName } from '../utils/encode-name';
 import { generateUuid } from '../utils/generate-uuid';
 import {
@@ -15,18 +16,13 @@ import {
   LocalStorageListFailedException,
   LocalStorageUploadFailedException,
 } from './local-storage.exception';
-import {
-  LOCAL_STORAGE_MODULE_OPTIONS,
-  LocalStorageModuleOptionsType,
-} from './local-storage.token';
+import { LocalStorageOptions } from './local-storage.options';
 
 @Injectable()
 export class LocalStorageService implements IStorageService {
   logger = new Logger(LocalStorageService.name);
-
   constructor(
-    @Inject(LOCAL_STORAGE_MODULE_OPTIONS)
-    private readonly options: LocalStorageModuleOptionsType,
+    @Inject(STORAGE_OPTIONS) private readonly options: LocalStorageOptions,
   ) {
     Object.keys(this.options).forEach((key) => {
       const unsetValues: string[] = [];
@@ -71,6 +67,9 @@ export class LocalStorageService implements IStorageService {
   }
 
   upload(name: string, buffer: Buffer, dir?: string) {
+    if (!dir || typeof dir !== 'string') {
+      throw new Error('dir is required and must be a string');
+    }
     return new Promise<{ key: string }>((resolve, reject) => {
       const encodedName = generateUuid() + '-' + encodeName(name);
       const year = new Date().getFullYear();
