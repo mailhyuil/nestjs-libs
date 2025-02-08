@@ -17,14 +17,6 @@
   "main": "dist/index.js",
   "module": "esm/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "default": "./dist/index.js",
-      "require": "./dist/index.js",
-      "import": "./esm/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
   "scripts": {
     "build:cjs": "nest build nestjs-libs --config nest-cli.cjs.json --path tsconfig.lib-cjs.json && tsc --emitDeclarationOnly --project tsconfig.lib-cjs.json",
     "build:esm": "nest build nestjs-libs --config nest-cli.esm.json --path tsconfig.lib-esm.json && tsc --emitDeclarationOnly --project tsconfig.lib-esm.json",
