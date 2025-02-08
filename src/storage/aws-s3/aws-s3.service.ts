@@ -7,15 +7,6 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
-  AWS_S3_MODULE_OPTIONS,
-  AwsS3DeleteFailedException,
-  AwsS3GetPresignedUrlFailedException,
-  AwsS3ListFailedException,
-  AwsS3ModuleOptionsType,
-  AwsS3UploadFailedException,
-  IStorageService,
-} from '@mailhyuil/nestjs-libs';
-import {
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -23,6 +14,14 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import path from 'path';
+import { IStorageService } from '../interfaces/storage.interface';
+import {
+  AwsS3DeleteFailedException,
+  AwsS3GetPresignedUrlFailedException,
+  AwsS3ListFailedException,
+  AwsS3UploadFailedException,
+} from './aws-s3.exception';
+import { AWS_S3_MODULE_OPTIONS, AwsS3ModuleOptionsType } from './aws-s3.token';
 
 @Injectable()
 export class AwsS3Service implements IStorageService {

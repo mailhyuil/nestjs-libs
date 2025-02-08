@@ -16,10 +16,6 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@mailhyuil/nestjs-libs": ["src"],
-      "@mailhyuil/nestjs-libs/*": ["src/*"]
-    }
+    "noFallthroughCasesInSwitch": false
   }
 }

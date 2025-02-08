@@ -1,2 +1,0 @@
-export class AwsS3DeleteFailedException extends Error{constructor(error){super(error)}}export class AwsS3UploadFailedException extends Error{constructor(error){super(error)}}export class AwsS3ListFailedException extends Error{constructor(error){super(error)}}export class AwsS3GetPresignedUrlFailedException extends Error{constructor(error){super(error)}}
-//# sourceMappingURL=aws-s3.exception.js.map

@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../src/storage/utils/encode-string.ts"],"sourcesContent":["export const encodeName = (str: string): string => {\r\n  return Buffer.from(str, 'latin1').toString('utf-8');\r\n};\r\n"],"names":["encodeName","str","Buffer","from","toString"],"mappings":"AAAA,OAAO,MAAMA,WAAa,AAACC,MACzB,OAAOC,OAAOC,IAAI,CAACF,IAAK,UAAUG,QAAQ,CAAC,QAC7C,CAAE"}

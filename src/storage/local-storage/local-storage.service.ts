@@ -1,12 +1,4 @@
 import {
-  IStorageService,
-  LOCAL_STORAGE_MODULE_OPTIONS,
-  LocalStorageDeleteFailedException,
-  LocalStorageListFailedException,
-  LocalStorageModuleOptionsType,
-  LocalStorageUploadFailedException,
-} from '@mailhyuil/nestjs-libs';
-import {
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -15,8 +7,18 @@ import {
 import { Request } from 'express';
 import fs, { createWriteStream } from 'fs';
 import path from 'path';
+import { IStorageService } from '../interfaces/storage.interface';
 import { encodeName } from '../utils/encode-name';
 import { generateUuid } from '../utils/generate-uuid';
+import {
+  LocalStorageDeleteFailedException,
+  LocalStorageListFailedException,
+  LocalStorageUploadFailedException,
+} from './local-storage.exception';
+import {
+  LOCAL_STORAGE_MODULE_OPTIONS,
+  LocalStorageModuleOptionsType,
+} from './local-storage.token';
 
 @Injectable()
 export class LocalStorageService implements IStorageService {
