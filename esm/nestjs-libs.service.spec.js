@@ -1,0 +1,2 @@
+import{Test}from"@nestjs/testing";import{NestjsLibsService}from"./nestjs-libs.service";describe("NestjsLibsService",()=>{let service;beforeEach(async()=>{const module=await Test.createTestingModule({providers:[NestjsLibsService]}).compile();service=module.get(NestjsLibsService)});it("should be defined",()=>{expect(service).toBeDefined()})});
+//# sourceMappingURL=nestjs-libs.service.spec.js.map

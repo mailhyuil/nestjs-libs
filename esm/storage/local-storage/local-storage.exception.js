@@ -1,0 +1,2 @@
+export class LocalStorageDeleteFailedException extends Error{constructor(error){super(error)}}export class LocalStorageUploadFailedException extends Error{constructor(error){super(error)}}export class LocalStorageListFailedException extends Error{constructor(error){super(error)}}
+//# sourceMappingURL=local-storage.exception.js.map

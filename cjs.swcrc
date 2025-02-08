@@ -1,0 +1,20 @@
+{
+  "$schema": "https://swc.rs/schema.json",
+  "sourceMaps": true,
+  "jsc": {
+    "baseUrl": "./",
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true
+    }
+  },
+  "module": {
+    "type": "commonjs",
+    "strict": false,
+    "strictMode": false,
+    "noInterop": false,
+    "lazy": false
+  },
+  "minify": true
+}
