@@ -3,6 +3,7 @@
   "version": "0.0.6",
   "description": "Libraries for NestJS",
   "author": "mailhyuil",
+  "homepage": "https://github.com/mailhyuil/nestjs-libs",
   "keywords": [
     "nestjs",
     "libs"
