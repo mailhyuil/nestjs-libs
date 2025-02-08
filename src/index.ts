@@ -9,4 +9,3 @@ export * from './storage/local-storage/local-storage.exception';
 export * from './storage/local-storage/local-storage.module';
 export * from './storage/local-storage/local-storage.service';
 export * from './storage/local-storage/local-storage.token';
-export * from './storage/utils/encode-string';

@@ -1,9 +1,9 @@
-import { DynamicModule, Module } from '@nestjs/common';
-import { LocalStorageService } from './local-storage.service';
 import {
   LOCAL_STORAGE_MODULE_OPTIONS,
   LocalStorageModuleOptionsType,
-} from './local-storage.token';
+  LocalStorageService,
+} from '@mailhyuil/nestjs-libs';
+import { DynamicModule, Module } from '@nestjs/common';
 
 @Module({})
 export class LocalStorageModule {

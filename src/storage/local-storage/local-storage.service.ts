@@ -1,5 +1,4 @@
 import {
-  encodeName,
   IStorageService,
   LOCAL_STORAGE_MODULE_OPTIONS,
   LocalStorageDeleteFailedException,
@@ -16,6 +15,7 @@ import {
 import { Request } from 'express';
 import fs, { createWriteStream } from 'fs';
 import path from 'path';
+import { encodeName } from '../utils/encode-name';
 import { generateUuid } from '../utils/generate-uuid';
 
 @Injectable()
