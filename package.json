@@ -21,7 +21,8 @@
     ".": {
       "default": "./dist/index.js",
       "require": "./dist/index.js",
-      "import": "./esm/index.js"
+      "import": "./esm/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
@@ -39,7 +40,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prepublish": "pnpm version patch && pnpm build"
+    "prepublish": "pnpm build"
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.1",
