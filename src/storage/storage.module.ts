@@ -1,21 +1,24 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { AwsS3StorageOptions } from 'esm';
+import { AwsS3StorageOptions } from './aws-s3/aws-s3.options';
 import { AwsS3Service } from './aws-s3/aws-s3.service';
 import { LocalStorageOptions } from './local-storage/local-storage.options';
 import { LocalStorageService } from './local-storage/local-storage.service';
+import { IStorageService } from './storage.interface';
 import { StorageService } from './storage.service';
 import { STORAGE_OPTIONS, STORAGE_SERVICE } from './storage.token';
 
 @Module({})
 export class StorageModule {
-  static forRoot({
+  static forRoot<T extends IStorageService>({
     service,
-    localOptions,
-    s3Options,
+    options,
   }: {
-    service: new (...args: any[]) => LocalStorageService;
-    localOptions?: LocalStorageOptions;
-    s3Options?: AwsS3StorageOptions;
+    service: new (...args: any[]) => T;
+    options: T extends LocalStorageService
+      ? LocalStorageOptions
+      : T extends AwsS3Service
+        ? AwsS3StorageOptions
+        : never;
   }): DynamicModule {
     return {
       global: true,
@@ -27,7 +30,7 @@ export class StorageModule {
         },
         {
           provide: STORAGE_OPTIONS,
-          useValue: localOptions || s3Options,
+          useValue: options,
         },
         LocalStorageService,
         AwsS3Service,
