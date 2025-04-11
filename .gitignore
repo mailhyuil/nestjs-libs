@@ -16,6 +16,9 @@ lerna-debug.log*
 # OS
 .DS_Store
 
+# tgz
+*.tgz
+
 # Tests
 /coverage
 /.nyc_output
