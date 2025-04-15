@@ -1,5 +1,6 @@
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
@@ -103,8 +104,22 @@ export class AwsS3Service implements IStorageService {
     });
   }
 
-  async getPresignedUrl({ key }: { key: string }) {
+  async getPresignedUrlForPut({ key }: { key: string }) {
     const command = new PutObjectCommand({
+      Bucket: this.options.bucket,
+      Key: key,
+    });
+    const url = await getSignedUrl(this.s3, command, { expiresIn: 3600 }).catch(
+      (error) => {
+        this.logger.error(error);
+        throw new AwsS3GetPresignedUrlFailedException(error);
+      },
+    );
+    return { url };
+  }
+
+  async getPresignedUrlForGet({ key }: { key: string }) {
+    const command = new GetObjectCommand({
       Bucket: this.options.bucket,
       Key: key,
     });
