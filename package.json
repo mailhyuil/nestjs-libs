@@ -93,16 +93,23 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "src/**/*.(t|j)s",
+      "!src/**/*.spec.ts",
+      "!src/**/*.interface.ts",
+      "!src/**/*.options.ts"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/src/",
-      "<rootDir>/libs/"
+      "<rootDir>/src/"
     ],
-    "moduleNameMapper": {
-      "^@mailhyuil/nestjs-libs/nestjs-libs(|/.*)$": "<rootDir>/libs/nestjs-libs/src/$1"
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
     }
   },
   "pnpm": {

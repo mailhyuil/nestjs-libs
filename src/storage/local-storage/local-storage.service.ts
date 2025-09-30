@@ -24,19 +24,21 @@ export class LocalStorageService implements IStorageService {
   constructor(
     @Inject(STORAGE_OPTIONS) private readonly options: LocalStorageOptions,
   ) {
-    Object.keys(this.options).forEach((key) => {
-      const unsetValues: string[] = [];
-      if (!this.options[key]) {
-        unsetValues.push(key);
-      }
-      if (unsetValues.length > 0) {
-        throw new InternalServerErrorException(
-          `Local Storage 설정이 필요합니다. Unset Values : [${unsetValues.join(
-            ', ',
-          )}]`,
-        );
-      }
-    });
+    const unsetValues: string[] = [];
+    (Object.keys(this.options) as Array<keyof LocalStorageOptions>).forEach(
+      (key) => {
+        if (!this.options[key]) {
+          unsetValues.push(key);
+        }
+      },
+    );
+    if (unsetValues.length > 0) {
+      throw new InternalServerErrorException(
+        `Local Storage 설정이 필요합니다. Unset Values : [${unsetValues.join(
+          ', ',
+        )}]`,
+      );
+    }
   }
 
   async list() {
@@ -66,31 +68,30 @@ export class LocalStorageService implements IStorageService {
     return keys;
   }
 
-  upload(name: string, buffer: Buffer, dir?: string) {
-    if (!dir || typeof dir !== 'string') {
-      throw new Error('dir is required and must be a string');
-    }
+  upload(name: string, buffer: Buffer, dir?: string): Promise<{ key: string }> {
     return new Promise<{ key: string }>((resolve, reject) => {
-      const encodedName = generateUuid() + '-' + encodeName(name);
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      const date = new Date().getDate();
-      const path = `${dir}/${year}/${month}/${date}`;
-
-      const finalDir = `${this.options.dir}/${path}`;
-
-      if (!fs.existsSync(finalDir)) {
-        fs.mkdirSync(finalDir, { recursive: true });
-      }
-
-      const key = `${path}/${encodedName}`;
-
       try {
+        const encodedName = generateUuid() + '-' + encodeName(name);
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth() + 1;
+        const date = new Date().getDate();
+        const subPath = dir
+          ? `${dir}/${year}/${month}/${date}`
+          : `uploads/${year}/${month}/${date}`;
+
+        const finalDir = `${this.options.dir}/${subPath}`;
+
+        if (!fs.existsSync(finalDir)) {
+          fs.mkdirSync(finalDir, { recursive: true });
+        }
+
+        const key = `${subPath}/${encodedName}`;
+
         fs.writeFileSync(`${this.options.dir}/${key}`, buffer);
+        resolve({ key });
       } catch (error) {
         reject(new LocalStorageUploadFailedException(error));
       }
-      resolve({ key });
     });
   }
 

@@ -7,4 +7,6 @@ export interface IStorageService {
   uploadByStream(req: Request): Promise<{ key: string }>;
   uploadByStream(req: Request, dir: string): Promise<{ key: string }>;
   delete(key: string): Promise<void>;
+  getPresignedUrlForGet?({ key }: { key: string }): Promise<{ url: string }>;
+  getPresignedUrlForPut?({ key }: { key: string }): Promise<{ url: string }>;
 }

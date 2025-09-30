@@ -32,19 +32,19 @@ export class AwsS3Service implements IStorageService {
   constructor(
     @Inject(STORAGE_OPTIONS) private readonly options: AwsS3StorageOptions,
   ) {
-    Object.keys(this.options).forEach((key) => {
-      const unsetValues: string[] = [];
-      if (!this.options[key]) {
-        unsetValues.push(key);
-      }
-      if (unsetValues.length > 0) {
-        throw new InternalServerErrorException(
-          `AWS S3 설정이 필요합니다. Unset Values : [${unsetValues.join(
-            ', ',
-          )}]`,
-        );
-      }
-    });
+    const unsetValues: string[] = [];
+    (Object.keys(this.options) as Array<keyof AwsS3StorageOptions>).forEach(
+      (key) => {
+        if (!this.options[key]) {
+          unsetValues.push(key);
+        }
+      },
+    );
+    if (unsetValues.length > 0) {
+      throw new InternalServerErrorException(
+        `AWS S3 설정이 필요합니다. Unset Values : [${unsetValues.join(', ')}]`,
+      );
+    }
     this.s3 = new S3Client({
       region: this.options.region,
       credentials: {
@@ -54,10 +54,15 @@ export class AwsS3Service implements IStorageService {
     });
   }
 
-  async upload(name: string, buffer: Buffer) {
+  async upload(
+    name: string,
+    buffer: Buffer,
+    dir?: string,
+  ): Promise<{ key: string }> {
     const ext = path.extname(name);
     const basename = path.basename(name, ext);
-    const key = `original/${basename}_${Date.now()}${ext}`;
+    const directory = dir ? `${dir}/` : 'original/';
+    const key = `${directory}${basename}_${Date.now()}${ext}`;
 
     const command = new PutObjectCommand({
       Bucket: this.options.bucket,
@@ -70,13 +75,14 @@ export class AwsS3Service implements IStorageService {
     return { key };
   }
 
-  uploadByStream(req: Request) {
+  uploadByStream(req: Request, dir?: string): Promise<{ key: string }> {
     return new Promise<{ key: string }>((resolve, reject) => {
       req.pipe(req.busboy);
       req.busboy.on('file', (name, file) => {
         const ext = path.extname(name);
         const basename = path.basename(name, ext);
-        const key = `original/${basename}_${Date.now()}${ext}`;
+        const directory = dir ? `${dir}/` : 'original/';
+        const key = `${directory}${basename}_${Date.now()}${ext}`;
         const command = new PutObjectCommand({
           Bucket: this.options.bucket,
           Key: key,

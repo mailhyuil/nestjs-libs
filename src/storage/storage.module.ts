@@ -30,7 +30,7 @@ export class StorageModule {
     service,
     options,
   }: {
-    service: new (...args: any[]) => T;
+    service: new (...args: unknown[]) => T;
     options: T extends LocalStorageService
       ? LocalStorageOptions
       : AwsS3StorageOptions;

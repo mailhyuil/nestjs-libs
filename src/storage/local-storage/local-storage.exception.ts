@@ -1,15 +1,28 @@
-export class LocalStorageDeleteFailedException extends Error {
-  constructor(error: any) {
-    super(error);
+export abstract class LocalStorageException extends Error {
+  constructor(
+    message: string,
+    public readonly cause: unknown,
+    public readonly operation: string,
+  ) {
+    super(message);
+    this.name = this.constructor.name;
   }
 }
-export class LocalStorageUploadFailedException extends Error {
-  constructor(error: any) {
-    super(error);
+
+export class LocalStorageDeleteFailedException extends LocalStorageException {
+  constructor(cause: unknown) {
+    super('Failed to delete file from local storage', cause, 'delete');
   }
 }
-export class LocalStorageListFailedException extends Error {
-  constructor(error: any) {
-    super(error);
+
+export class LocalStorageUploadFailedException extends LocalStorageException {
+  constructor(cause: unknown) {
+    super('Failed to upload file to local storage', cause, 'upload');
+  }
+}
+
+export class LocalStorageListFailedException extends LocalStorageException {
+  constructor(cause: unknown) {
+    super('Failed to list files from local storage', cause, 'list');
   }
 }

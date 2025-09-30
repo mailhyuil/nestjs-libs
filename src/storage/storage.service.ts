@@ -36,4 +36,22 @@ export class StorageService implements IStorageService {
   delete(key: string) {
     return this.storageService.delete(key);
   }
+
+  getPresignedUrlForGet({ key }: { key: string }): Promise<{ url: string }> {
+    if (this.storageService.getPresignedUrlForGet) {
+      return this.storageService.getPresignedUrlForGet({ key });
+    }
+    throw new Error(
+      'getPresignedUrlForGet 메서드를 지원하지 않는 스토리지 서비스입니다.',
+    );
+  }
+
+  getPresignedUrlForPut({ key }: { key: string }): Promise<{ url: string }> {
+    if (this.storageService.getPresignedUrlForPut) {
+      return this.storageService.getPresignedUrlForPut({ key });
+    }
+    throw new Error(
+      'getPresignedUrlForPut 메서드를 지원하지 않는 스토리지 서비스입니다.',
+    );
+  }
 }
