@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Request } from 'express';
+import { Readable } from 'stream';
 import { IStorageService } from './storage.interface';
 import { STORAGE_SERVICE } from './storage.token';
 
@@ -23,13 +23,27 @@ export class StorageService implements IStorageService {
     }
   }
 
-  uploadByStream(req: Request): Promise<{ key: string }>;
-  uploadByStream(req: Request, dir: string): Promise<{ key: string }>;
-  uploadByStream(req: Request, dir?: string) {
-    if (dir && typeof dir === 'string') {
-      return this.storageService.uploadByStream(req, dir);
+  uploadByStream(params: {
+    filename: string;
+    stream: Readable;
+  }): Promise<{ key: string }>;
+  uploadByStream(params: {
+    filename: string;
+    stream: Readable;
+    dir: string;
+  }): Promise<{ key: string }>;
+  uploadByStream(params: { filename: string; stream: Readable; dir?: string }) {
+    if (params.dir && typeof params.dir === 'string') {
+      return this.storageService.uploadByStream({
+        filename: params.filename,
+        stream: params.stream,
+        dir: params.dir,
+      });
     } else {
-      return this.storageService.uploadByStream(req);
+      return this.storageService.uploadByStream({
+        filename: params.filename,
+        stream: params.stream,
+      });
     }
   }
 

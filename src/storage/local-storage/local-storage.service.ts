@@ -4,9 +4,9 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { Request } from 'express';
 import fs, { createWriteStream } from 'fs';
 import path from 'path';
+import { Readable } from 'stream';
 import { IStorageService } from '../storage.interface';
 import { STORAGE_OPTIONS } from '../storage.token';
 import { encodeName } from '../utils/encode-name';
@@ -95,38 +95,35 @@ export class LocalStorageService implements IStorageService {
     });
   }
 
-  uploadByStream(req: Request, dir?: string) {
+  uploadByStream(params: { filename: string; stream: Readable; dir?: string }) {
+    const { filename, stream, dir = 'uploads' } = params;
     return new Promise<{ key: string }>((resolve, reject) => {
       // 🚎 busboy
-      req.pipe(req.busboy);
-      req.busboy.on('file', (name, file, info) => {
-        const { filename } = info;
-        const encodedName = generateUuid() + '-' + encodeName(filename);
-        const year = new Date().getFullYear();
-        const month = new Date().getMonth() + 1;
-        const date = new Date().getDate();
-        const path = `${dir}/${year}/${month}/${date}`;
-        const finalDir = `${this.options.dir}/${path}`;
+      const encodedName = generateUuid() + '-' + encodeName(filename);
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+      const date = new Date().getDate();
+      const path = `${dir}/${year}/${month}/${date}`;
+      const finalDir = `${this.options.dir}/${path}`;
 
-        if (!fs.existsSync(finalDir)) {
-          fs.mkdirSync(finalDir, { recursive: true });
-        }
-        const key = `${path}/${encodedName}`;
-        const ws = createWriteStream(`${this.options.dir}/${key}`);
+      if (!fs.existsSync(finalDir)) {
+        fs.mkdirSync(finalDir, { recursive: true });
+      }
+      const key = `${path}/${encodedName}`;
+      const ws = createWriteStream(`${this.options.dir}/${key}`);
 
-        file.on('data', (data) => {
-          ws.write(data);
-        });
+      stream.on('data', (data) => {
+        ws.write(data);
+      });
 
-        file.on('end', () => {
-          ws.end();
-          ws.close();
-          resolve({ key });
-        });
+      stream.on('end', () => {
+        ws.end();
+        ws.close();
+        resolve({ key });
+      });
 
-        file.on('error', (err) => {
-          reject(new LocalStorageUploadFailedException(err));
-        });
+      stream.on('error', (err) => {
+        reject(new LocalStorageUploadFailedException(err));
       });
     });
   }

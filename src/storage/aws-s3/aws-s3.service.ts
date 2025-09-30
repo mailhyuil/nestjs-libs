@@ -12,10 +12,10 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { Request } from 'express';
 import path from 'path';
 import { IStorageService } from '../storage.interface';
 
+import { Readable } from 'stream';
 import { STORAGE_OPTIONS } from '../storage.token';
 import {
   AwsS3DeleteFailedException,
@@ -75,28 +75,30 @@ export class AwsS3Service implements IStorageService {
     return { key };
   }
 
-  uploadByStream(req: Request, dir?: string): Promise<{ key: string }> {
+  uploadByStream(params: {
+    filename: string;
+    stream: Readable;
+    dir?: string;
+  }): Promise<{ key: string }> {
+    const { filename, stream, dir } = params;
     return new Promise<{ key: string }>((resolve, reject) => {
-      req.pipe(req.busboy);
-      req.busboy.on('file', (name, file) => {
-        const ext = path.extname(name);
-        const basename = path.basename(name, ext);
-        const directory = dir ? `${dir}/` : 'original/';
-        const key = `${directory}${basename}_${Date.now()}${ext}`;
-        const command = new PutObjectCommand({
-          Bucket: this.options.bucket,
-          Key: key,
-          Body: file,
-        });
-        this.s3
-          .send(command)
-          .then(() => {
-            resolve({ key });
-          })
-          .catch((error) => {
-            reject(new AwsS3UploadFailedException(error));
-          });
+      const ext = path.extname(filename);
+      const basename = path.basename(filename, ext);
+      const directory = dir ? `${dir}/` : 'original/';
+      const key = `${directory}${basename}_${Date.now()}${ext}`;
+      const command = new PutObjectCommand({
+        Bucket: this.options.bucket,
+        Key: key,
+        Body: stream,
       });
+      this.s3
+        .send(command)
+        .then(() => {
+          resolve({ key });
+        })
+        .catch((error) => {
+          reject(new AwsS3UploadFailedException(error));
+        });
     });
   }
 
