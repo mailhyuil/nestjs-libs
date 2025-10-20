@@ -28,10 +28,6 @@ export class AwsS3Service implements IStorageService {
   ) {
     this.s3 = new S3Client({
       region: this.options.region,
-      credentials: {
-        accessKeyId: this.options.accessKeyId,
-        secretAccessKey: this.options.secretAccessKey,
-      },
     });
   }
 
