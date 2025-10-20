@@ -6,16 +6,10 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import path from 'path';
-import { IStorageService } from '../storage.interface';
-
 import { Readable } from 'stream';
+import { IStorageService } from '../storage.interface';
 import { STORAGE_OPTIONS } from '../storage.token';
 import {
   AwsS3DeleteFailedException,
@@ -32,19 +26,6 @@ export class AwsS3Service implements IStorageService {
   constructor(
     @Inject(STORAGE_OPTIONS) private readonly options: AwsS3StorageOptions,
   ) {
-    const unsetValues: string[] = [];
-    (Object.keys(this.options) as Array<keyof AwsS3StorageOptions>).forEach(
-      (key) => {
-        if (!this.options[key]) {
-          unsetValues.push(key);
-        }
-      },
-    );
-    if (unsetValues.length > 0) {
-      throw new InternalServerErrorException(
-        `AWS S3 설정이 필요합니다. Unset Values : [${unsetValues.join(', ')}]`,
-      );
-    }
     this.s3 = new S3Client({
       region: this.options.region,
       credentials: {

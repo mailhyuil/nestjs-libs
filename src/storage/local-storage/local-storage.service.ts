@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import fs, { createWriteStream } from 'fs';
 import path from 'path';
 import { Readable } from 'stream';
@@ -24,20 +19,10 @@ export class LocalStorageService implements IStorageService {
   constructor(
     @Inject(STORAGE_OPTIONS) private readonly options: LocalStorageOptions,
   ) {
-    const unsetValues: string[] = [];
-    (Object.keys(this.options) as Array<keyof LocalStorageOptions>).forEach(
-      (key) => {
-        if (!this.options[key]) {
-          unsetValues.push(key);
-        }
-      },
-    );
-    if (unsetValues.length > 0) {
-      throw new InternalServerErrorException(
-        `Local Storage 설정이 필요합니다. Unset Values : [${unsetValues.join(
-          ', ',
-        )}]`,
-      );
+    this.options.dir = this.options.dir ?? 'uploads';
+    this.options.dir = this.options.dir.replace(/\/+$/g, ''); // 끝에 / 제거
+    if (!fs.existsSync(this.options.dir)) {
+      fs.mkdirSync(this.options.dir, { recursive: true });
     }
   }
 
